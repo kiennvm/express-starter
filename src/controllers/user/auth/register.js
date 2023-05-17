@@ -1,21 +1,10 @@
 import { User } from '../../../models/index.js';
 
-export default async (req, res) => {
-  let user = new User({
-    email: req.body.email,
-    username: req.body.username,
-  });
+export default async (req, res, next) => {
+  await User.create(req.body);
 
-  user = await user.save().catch((err) => {
-    return res.status(500).json({
-      code: 500,
-      message: err,
-    });
-  });
-
-  return res.status(200).json({
+  res.status(200).json({
     code: 200,
     message: 'Registered successfully!',
-    user,
   });
 };

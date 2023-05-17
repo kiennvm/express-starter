@@ -1,18 +1,11 @@
 import express from 'express';
-import asyncHandler from 'express-async-handler';
-import { prefix } from '../config/index.js';
+import { port, prefix } from '../config/index.js';
 import routes from '../routes/index.js';
 import AppError from '../errors/AppError.js';
 
 export default (app) => {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
-  app.use(
-    asyncHandler(async (req, res, next) => {
-      next();
-    })
-  );
-
   app.use(prefix, routes);
 
   app.use((req, res, next) => {
@@ -34,6 +27,7 @@ export default (app) => {
     next(error);
   });
 
+  // Handle all errors
   app.use((error, req, res, _next) => {
     res.status(error.status || 500);
     // console.log(resultCode, req?.user?._id ?? '', error.message, level, req);
@@ -41,5 +35,13 @@ export default (app) => {
       code: error.status,
       message: error.message,
     });
+  });
+
+  app.listen(port, (err) => {
+    if (err) {
+      console.log(err);
+      return process.exit(1);
+    }
+    console.log(`Server is running on port ${port}`);
   });
 };

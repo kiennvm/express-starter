@@ -14,7 +14,10 @@ function fakeDBCall(id) {
   });
 }
 
-router.post('/', register);
+router.post(
+  '/',
+  asyncHandler(async (req, res, next) => register(req, res, next))
+);
 
 router.get(
   '/:id',
